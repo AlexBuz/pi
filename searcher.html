@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digits of Pi Searcher</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .centered {
+            width: 51.2ch;
+            max-width: 95%;
+            margin: auto;
+        }
+
+        #search-input {
+            border: 1px solid black;
+            border-radius: 5px;
+            font-family: monospace;
+            padding: 5px;
+            width: 100%;
+            margin: 5px auto;
+            font-size: large;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        #search-result {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="header">Digits of Pi Searcher</h2>
+    <div class="centered">
+        <label for="numeric-checkbox">Use numeric keypad (mobile only):</label>
+        <input id="numeric-checkbox" type="checkbox">
+        <input id="search-input" placeholder="enter some digits to search &pi; for...">
+        <span id="search-result"></span>
+    </div>
+    <script>
+        let pi;
+        const numeric_checkbox = document.getElementById('numeric-checkbox');
+        const search_input = document.getElementById('search-input');
+        const search_result = document.getElementById('search-result');
+        const s = n => n - 1 ? 's' : '';
+        const search = () => {
+            const input = search_input.value.replace(/\D/g, '');
+            let index;
+            search_result.innerHTML =
+                !input.length
+                    ? ''
+                    : ~(index = pi.indexOf(input))
+                        ? `<strong>${input}</strong> first appears <strong>${index + 1}</strong> digit${s(index + 1)} into <strong>&pi;</strong>`
+                        : `<strong>${input}</strong> does not appear in the first million digits of <strong>&pi;</strong>`;
+        };
+        const numericChanged = e => {
+            search_input.inputMode = numeric_checkbox.checked ? 'numeric' : 'text';
+        };
+        numeric_checkbox.addEventListener('change', numericChanged);
+        search_input.addEventListener('input', search);
+        fetch('pi_dec_1m.txt')
+            .then(result => result.text())
+            .then(millionDigits => pi = millionDigits);
+    </script>
+</body>
+
+</html>
