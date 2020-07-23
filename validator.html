@@ -90,6 +90,12 @@
         const giveFeedback = () => {
             const digits = digits_input.value.replace(/\D/g, '');
             const digitsCount = digits.length;
+            if (digitsCount === 0) {
+                digits_feedback.classList.add('hidden');
+                digits_summary.classList.add('hidden');
+                digits_summary.textContent = '';
+                return;
+            }
             let bestCorrectCount = 0;
             let bestOffset = 0;
             for (let offset = 0; offset < pi.length; offset++) {
@@ -115,21 +121,15 @@
                 const correctDigit = pi[i + bestOffset];
                 digits_feedback.append(makeDigitElement(digit, correctDigit));
             }
-            if (digitsCount === 0) {
-                digits_feedback.classList.add('hidden');
-                digits_summary.classList.add('hidden');
-                digits_summary.innerHTML = '';
-            } else {
-                let summary = `${bestCorrectCount}/${digitsCount} digit${s(digitsCount)} correct`;
-                if (bestOffset === 0 && bestCorrectCount > 1) {
-                    digits_feedback.firstElementChild.insertAdjacentElement('afterend', makeDigitElement('.', '.'));
-                } else if (bestOffset > 1) {
-                    summary += `${bestOffset ? ` (starting ${bestOffset} digit${s(digitsCount)} after the decimal point)` : ''}`;
-                }
-                digits_summary.innerHTML = summary;
-                digits_feedback.classList.remove('hidden');
-                digits_summary.classList.remove('hidden');
+            let summary = `${bestCorrectCount}/${digitsCount} digit${s(digitsCount)} correct`;
+            if (bestOffset === 0 && bestCorrectCount > 1) {
+                digits_feedback.firstElementChild.insertAdjacentElement('afterend', makeDigitElement('.', '.'));
+            } else if (bestOffset > 1) {
+                summary += ` (starting ${bestOffset} digit${s(digitsCount)} after the decimal point)`;
             }
+            digits_summary.textContent = summary;
+            digits_feedback.classList.remove('hidden');
+            digits_summary.classList.remove('hidden');
         };
         const numericChanged = e => {
             digits_input.inputMode = numeric_checkbox.checked ? 'decimal' : 'text';
